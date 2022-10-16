@@ -6,7 +6,6 @@ image = "ghcr.io/raftario/ipp"
 
 [[services]]
 internal_port = 8080
-processes = ["app"]
 protocol = "tcp"
 script_checks = []
 [services.concurrency]
