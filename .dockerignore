@@ -1,7 +1,7 @@
 target/
-fly.toml
 
 .github/
 .gitignore
 Dockerfile
+fly.toml
 rust-toolchain.toml

@@ -1,0 +1,27 @@
+app = "ipp"
+kill_timeout = 30
+
+[build]
+image = "ghcr.io/raftario/ipp"
+
+[[services]]
+internal_port = 8080
+processes = ["app"]
+protocol = "tcp"
+script_checks = []
+[services.concurrency]
+hard_limit = 250
+soft_limit = 200
+
+[[services.ports]]
+handlers = ["http"]
+port = 80
+
+[services.http_checks]
+interval = "10s"
+grace_period = "100ms"
+method = "get"
+path = "/"
+protocol = "http"
+restart_limit = 2
+timeout = "10ms"
