@@ -1,6 +1,6 @@
 # ipp
 
-This program listens for HTTP requests on all interfaces and responds with the public facing IP address of the request in raw text format. It selects the first valid and globally routable IP in the `X-Forwarded-For` header then falls back to the remote IP of the connection.
+This program listens for HTTP requests on all interfaces and responds with the public facing IP address of the request in raw text format. It selects the first valid and globally routable IP in the `X-Forwarded-For` header then falls back to the remote IP of the connection. It does not log requests or print anything at all.
 
 ## Public deployment
 
