@@ -96,6 +96,6 @@ jobs:
         with:
           push: true
           tags: ghcr.io/raftario/ipp:latest
-          platforms: linux/amd64,linux/arm64
+          # platforms: linux/amd64,linux/arm64 # https://github.com/docker/build-push-action/issues/621
           cache-from: type=gha
           cache-to: type=gha,mode=max
