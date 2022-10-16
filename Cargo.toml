@@ -3,6 +3,7 @@ name = "ipp"
 version = "0.1.0"
 edition = "2021"
 authors = ["Raphaël Thériault <self@raftar.io>"]
+license = "MIT"
 
 [dependencies]
 hyper = { git = "https://github.com/hyperium/hyper", version = "1.0.0-dev.0", features = [
