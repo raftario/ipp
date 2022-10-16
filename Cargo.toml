@@ -1,0 +1,16 @@
+[package]
+name = "ipp"
+version = "0.1.0"
+edition = "2021"
+authors = ["Raphaël Thériault <self@raftar.io>"]
+
+[dependencies]
+hyper = { git = "https://github.com/hyperium/hyper", version = "1.0.0-dev.0", features = [
+    "server",
+    "http1",
+] }
+socket2 = "0.4.7"
+tokio = { version = "1.21.2", features = ["rt", "net"] }
+
+[profile.release]
+lto = true

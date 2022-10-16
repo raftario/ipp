@@ -1,0 +1,99 @@
+name: Build & Publish
+on:
+  push:
+    branches: [main]
+jobs:
+  binary:
+    name: Binary
+    strategy:
+      matrix:
+        target:
+          - x86_64-unknown-linux-musl
+          - x86_64-pc-windows-msvc
+          - x86_64-apple-darwin
+          - aarch64-unknown-linux-musl
+          - aarch64-apple-darwin
+        include:
+          - target: x86_64-unknown-linux-musl
+            os: ubuntu-latest
+          - target: x86_64-pc-windows-msvc
+            os: windows-latest
+            ext: .exe
+          - target: x86_64-apple-darwin
+            os: macos-latest
+          - target: aarch64-unknown-linux-musl
+            os: ubuntu-latest
+            rustflags: -C linker=aarch64-linux-gnu-gcc
+            packages: gcc-aarch64-linux-gnu
+          - target: aarch64-apple-darwin
+            os: macos-latest
+            bin: target/aarch64-apple-darwin/release/pxx
+      fail-fast: false
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v3
+      - run: sudo apt-get update && sudo apt-get install -y ${{ matrix.packages }}
+        if: matrix.packages
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: nightly
+          target: ${{ matrix.target }}
+          profile: minimal
+          override: true
+      - uses: Swatinem/rust-cache@v1
+        with:
+          key: ${{ matrix.target }}
+
+      - name: Build
+        run: cargo build --release --target ${{ matrix.target }}
+        env:
+          RUSTFLAGS: ${{ matrix.rustflags }}
+
+      - name: Publish
+        uses: actions/upload-artifact@v3
+        with:
+          name: ipp-${{ matrix.target }}
+          path: target/${{ matrix.target }}/release/ipp${{ matrix.ext }}
+  binary-macos-universal:
+    name: Binary (macOS universal)
+    needs: binary
+    runs-on: macos-latest
+    steps:
+      - uses: actions/download-artifact@v3
+        with:
+          name: ipp-x86_64-apple-darwin
+          path: x86_64
+      - uses: actions/download-artifact@v3
+        with:
+          name: ipp-aarch64-apple-darwin
+          path: aarch64
+
+      - name: Build
+        run: lipo -create -output ipp x86_64/ipp aarch64/ipp
+
+      - name: Publish
+        uses: actions/upload-artifact@v3
+        with:
+          name: ipp-universal-apple-darwin
+          path: ipp
+
+  docker:
+    name: Docker
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: docker/setup-buildx-action@v2
+      - uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: raftario
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build & Publish
+        uses: docker/build-push-action@v3
+        with:
+          push: true
+          tags: ghcr.io/raftario/ipp:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max

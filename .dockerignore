@@ -1,0 +1,7 @@
+target/
+fly.toml
+
+.github/
+.gitignore
+Dockerfile
+rust-toolchain.toml
