@@ -46,7 +46,7 @@ jobs:
           key: ${{ matrix.target }}
 
       - name: Build
-        run: cargo build --release --target ${{ matrix.target }}
+        run: cargo --locked build --release --target ${{ matrix.target }}
         env:
           RUSTFLAGS: ${{ matrix.rustflags }}
 

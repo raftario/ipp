@@ -16,4 +16,4 @@ jobs:
       - name: rustfmt
         run: cargo fmt --check
       - name: clippy
-        run: cargo clippy -- -D warnings
+        run: cargo --locked clippy -- -D warnings
